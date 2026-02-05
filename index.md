@@ -14,7 +14,7 @@ En este modulo abarcaremos ciertos problemas o complicaciones que podriamos enco
 
 |Dataset|[Calificaciones.csv](Calificaciones.csv)|
 |-------|--------|
-|Notebook|[.ipynb](Tarea_A1_aprendizaje_estadistico_automatico.ipynb)|
+|Notebook|[.ipynb](Tarea_3_Solucion_de_problemas.ipynb)|
 
 Esto con el objetivo de aprender a lidiar con estos tipos de situaciones y poder manipular el dataset para obtener un resultado estadisticamente confiable.
 
