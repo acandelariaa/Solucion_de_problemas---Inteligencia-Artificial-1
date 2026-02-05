@@ -571,4 +571,13 @@ plt.show()
 
 
 
-![predvsrealnog](predvsreal_nog.png)
+![predvsrealnog](predvsrealnog.png)
+
+
+Con esta ultima grafica, vemos que al quitar esas variables, la dispersion de nuestro modelo de vuelve todavia mas notoria, de modo que para la predicción de la calificacion final, seria conveniente no quitarlas y trabajarlas con cuidado.
+
+# Reflexión Conclusion
+
+En este análisis se hizo evidente que antes de entrenar cualquier modelo es fundamental realizar una limpieza adecuada de los datos y una exploración previa de sus relaciones. Revisar valores atípicos, posibles huecos de información y la correlación entre variables permite evitar interpretaciones engañosas y problemas como la multicolinealidad, que puede distorsionar los coeficientes y la estabilidad del modelo. Además, entender la naturaleza de cada variable ayuda a codificarlas correctamente y a no introducir ruido innecesario en el proceso de modelado.
+
+Por otro lado, la comparación entre modelos mostró claramente la importancia de la selección de características. Incluir o excluir variables relevantes cambia de forma drástica la capacidad predictiva, como se observó al retirar G1 y G2, donde el poder explicativo cayó considerablemente. Esto demuestra que un buen modelo no depende solo del algoritmo, sino de qué información se le proporciona. La selección consciente de variables, respaldada por métricas estadísticas y análisis exploratorio, es clave para construir modelos confiables y con sentido práctico.
