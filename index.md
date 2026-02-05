@@ -12,7 +12,7 @@ En este modulo abarcaremos ciertos problemas o complicaciones que podriamos enco
 
 ### Recursos
 
-|Dataset|[Calificaciones.csv](Calificaciones.csv)|
+|Dataset|[Calificaciones.csv](A1_3_Calificaciones.csv)|
 |-------|--------|
 |Notebook|[.ipynb](Tarea_3_Solucion_de_problemas.ipynb)|
 
