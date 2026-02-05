@@ -145,6 +145,7 @@ pued indicar que estas variables son importantes en nuestro dataset.
 ### Metricas Estadisticas (F-stat / p-val)
 
 
+
 >Python Code
 
 
@@ -176,3 +177,91 @@ p-value = 5.490568541948647e-95
 
 Esto nos dice que en nuestro modelo, hay variables importantes y debido al pvalue pequeño,
 la probabilidad de que esto sea al azar es bajisima, cosa que nos indica que vamos por buen camino.
+
+Nota: Como las variables, Escuela_bin y Sexo_bin,  tirenen un pvalue de casi 50%, vamos a quitarlas y a definir un nuevo dataset sin esas variables
+
+
+### Eliminar variables con p-val muy grande
+
+
+
+>Python Code
+
+
+
+```python
+# generar nuevos modelos sin las variables con un pvalue muy grande
+XNew = X.drop(['Escuela_bin','Sexo_bin'], axis = 1)
+modelNew = sm.OLS(Y,sm.add_constant(XNew))
+resultsNew = modelNew.fit()
+```
+
+
+Calcular metricas estadisticas para esas variables, para posteriormente usarlas 
+
+
+>Python Code
+
+
+```python
+yhatNew = resultsNew.predict(sm.add_constant(XNew))
+RSSNew = sum((Y-yhatNew)**2)
+EMSNew = (RSSNew - RSS) / 1
+FNew = EMSNew / RMS
+pvalNew = st.f.sf(FNew, 1, n-m-1)
+t = np.sqrt(FNew)
+print("New F =", FNew)
+print("t-value =", t)
+print("p-value =", pvalNew)
+print("OLS's p-value Escuela =", results.pvalues["Escuela_bin"])
+print("OLS's p-value Sexo =", results.pvalues["Sexo_bin"])
+```
+
+
+>Output
+
+
+
+```text
+New F = 0.7352437702228594
+t-value = 0.8574635678691307
+p-value = 0.392000256699059
+OLS's p-value Escuela = 0.5411805124962055
+OLS's p-value Sexo = 0.5421269209145818
+```
+
+
+### Generar Nuevos elementos para la validacion
+
+
+
+>Python Code
+
+
+```python
+# Genera el elemento XTest
+XTest = test.drop('G3', axis = 1)
+yhatTest = results.predict(sm.add_constant(XTest))
+YTest = test.G3
+RSSTest = sum((YTest-yhatTest)**2)
+TSSTest = sum((YTest-np.mean(YTest))**2)
+nTest = XTest.shape[0]
+mTest = XTest.shape[1]
+RSETest = np.sqrt(RSSTest/(nTest))
+R2Test = 1 - RSSTest / TSSTest
+print("RSE =", RSETest)
+print("R^2 =", R2Test)
+```
+
+
+
+>Output
+
+
+
+```text
+RSE = 1.8853513045702408
+R^2 = 0.8046668364678251
+```
+
+Vemos que tenemos un R^2 de 0.8, es decir, nuestro modelo explica el 80% de los datos del dataset, un buen numero hablando relativamente, y con un RSE de 1.88 de variacion en cuanto a la salida:
