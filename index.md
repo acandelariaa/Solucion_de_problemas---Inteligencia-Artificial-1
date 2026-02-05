@@ -18,6 +18,13 @@ En este modulo abarcaremos ciertos problemas o complicaciones que podriamos enco
 
 Esto con el objetivo de aprender a lidiar con estos tipos de situaciones y poder manipular el dataset para obtener un resultado estadisticamente confiable.
 
+## Metodología
+- Carga y Exploración de Datos: explorar la cantidad de observaciones, escalas y variables que tenemos
+- Preparación y Limpieza: limpiar datos, llenar huecos, identificar outliers.
+- Análisis de posibles relaciones entre variables: análisis mediante matriz de correlación e interpretación
+- Selección de características: selección de variables que aportan y cuáles no
+- Entrenamiento y Evaluación del modelo: creación de un modelo de regresión lineal múltiple
+- Conclusión: conclusión general de esta práctica.
 # Procedimiento
 
 [Preparación / Limpieza](Data_Exploring.md)
