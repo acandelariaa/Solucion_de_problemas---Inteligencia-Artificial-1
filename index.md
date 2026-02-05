@@ -29,6 +29,6 @@ Esto con el objetivo de aprender a lidiar con estos tipos de situaciones y poder
 
 [Exploracion de Datos](Exploracion_datos.md)
 
-[Preparación / Limpieza](preparacion_limpieza.md)
+[Preparación / Limpieza](pPeparacion_limpieza.md)
 
-[Relaciones entre variables y seleccion de caracteristicas](Relaciones_variables.md)
+[Relaciones entre variables y seleccion de caracteristicas](Relaciones_entre_variables.md)
