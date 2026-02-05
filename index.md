@@ -27,10 +27,8 @@ Esto con el objetivo de aprender a lidiar con estos tipos de situaciones y poder
 - Conclusión: conclusión general de esta práctica.
 # Procedimiento
 
-[Preparación / Limpieza](Data_Exploring.md)
+[Exploracion de Datos](Exploracion_datos.md)
 
-[Diseño del Estudio](Study_Design.md)
+[Preparación / Limpieza](.md)
 
 [Relaciones entre variables y seleccion de caracteristicas](Output_variable.md)
-
-[Conclusiones](Grafic_analysis_conclusion.md)
