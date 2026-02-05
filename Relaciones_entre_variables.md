@@ -90,6 +90,8 @@ eso es buena señal.
 
 Fuera de eso, seria muy interesante ver el comportamiento de los datos si usaramos G1 y G2, asi como si los excluyeramos.
 
+### Selección de Caracteristicas
+
 Exploremos los dos casos, de igual forma, naturalmente uno tendra mejor resultado que otro, asi a simple vista, si solo nos concentramos
 en la calificacion final (g3), probablemente si excluimos las variables, tendremos una peor prediccion de datos, ya que estariamos quitando 
 variables muy criticas para esta estudio.
