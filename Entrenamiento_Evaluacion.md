@@ -167,7 +167,7 @@ print("p-value =", pval)
 ```
 
 
->OutPut
+>Output
 
 
 ```text
@@ -265,3 +265,310 @@ R^2 = 0.8046668364678251
 ```
 
 Vemos que tenemos un R^2 de 0.8, es decir, nuestro modelo explica el 80% de los datos del dataset, un buen numero hablando relativamente, y con un RSE de 1.88 de variacion en cuanto a la salida:
+
+
+# Grafica Predicción vs Valores reales
+
+
+
+>Python Code
+
+
+
+```python
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Predicciones
+yHatTest = results.predict(sm.add_constant(XTest))
+YTest = test["G3"]
+
+# Gráfica
+plt.figure(figsize=(7,6))
+plt.scatter(YTest, yHatTest, alpha=0.7)
+
+# Línea ideal (predicción perfecta)
+min_val = min(YTest.min(), yHatTest.min())
+max_val = max(YTest.max(), yHatTest.max())
+plt.plot([min_val, max_val], [min_val, max_val],color='red')
+
+plt.xlabel("Valores reales (G3)")
+plt.ylabel("Valores predichos (G3)")
+plt.title("Predicciones vs Valores Reales")
+```
+
+
+>Output
+
+
+
+![predvsreal](predvsreal.png)
+
+Listo!, vemos que esta grafica nos muestra un comportamiento aceptable en la dispersion de nuestro dataset, estando relativamente cerca de la linea de tendencia, con ciertas excepciones. En general podemos decir que este modelo es bastante bueno para describir el comportamiento de nuestro dataset.
+
+
+Ahora hagamos lo mismo pero con algunos ajustes, vimos que sorprendentemente estudiar mas no siempre significa meyor calificación y otras curiosidades del modelo, pero podemos observar que practicamente g1 y g2 predominan el modelo con un pvalue practicamente de 0, es decir, son resultados previos, de modo que seria interesante ver como se comportan esos modelos sin alguna de estas variables, esto ademas de el summary del modelo nos dice que hay una gran multicolinearidad de variables, lo cual puede ser un problema.
+
+
+# Modelo SIN G1 Y G2
+
+
+### Particion de datos
+
+
+
+>Python Code
+
+
+
+```python
+# particion de datos
+train2 = df.sample(frac=0.7, random_state=1)
+test2 = df.drop(train2.index)
+
+print("Train:", train2.shape)
+print("Test:", test2.shape)
+print(train2.head())
+```
+
+
+>Output
+
+
+```text
+Train: (266, 13)
+Test: (114, 13)
+     Edad  HorasDeEstudio  Reprobadas  Internet  Faltas  G1  G2  G3  Sexo_bin  \
+251    16               2           0         1       6   7  10  10         0   
+184    16               2           0         1      14  12  13  12         1   
+288    18               3           0         1       6  15  14  14         0   
+189    17               2           0         0       4   8   9  10         0   
+240    17               2           0         1      14  12  12  12         0   
+
+     Escuela_bin  Estudio_bajo  Estudio_moderado  Estudio_alto  
+251            1             0                 1             0  
+184            1             0                 1             0  
+288            1             0                 1             0  
+189            1             0                 1             0  
+240            1             0                 1             0  
+```
+
+
+
+>Nota: se mostrara de forma mas directa los resultados para no alargar el estudio
+
+
+# Modelo Original y metricas estadisticas
+
+
+>Python Code
+
+
+```python
+## ================= MODELO 1: CON G1 Y G2 =================
+
+import statsmodels.api as sm
+import numpy as np
+import scipy.stats as st
+
+X_nog = train2.drop('G3', axis=1)
+Y_nog = train2['G3']
+
+model_nog = sm.OLS(Y_nog, sm.add_constant(X_nog))
+results_nog = model_nog.fit()
+
+
+# ---- Estadísticos manuales ----
+yhat_nog = results_nog.predict(sm.add_constant(X_nog))
+ybar_nog = np.mean(Y_nog)
+
+ESS_nog = sum((yhat_nog - ybar_nog)**2)
+RSS_nog = sum((Y_nog - yhat_nog)**2)
+
+m_nog = X_nog.shape[1]
+n_nog = X_nog.shape[0]
+
+EMS_nog = ESS_nog / m_nog
+RMS_nog = RSS_nog / (n_nog - m_nog - 1)
+
+F_nog = EMS_nog / RMS_nog
+pval_nog = st.f.sf(F_nog, m_nog, n_nog - m_nog - 1)
+
+print("F_nog =", F_nog)
+print("p-value =", pval_nog)
+```
+
+
+>Ouput
+
+
+
+```text
+F_nog = 105.1741451830113
+p-value = 5.728133460402917e-91
+```
+
+
+# Modelo SIN G1 Y G2
+
+### Summary
+
+
+>Python Code
+
+
+
+```python
+
+## ================= MODELO 2: SIN G1 Y G2 =================
+
+XNew_nog = X_nog.drop(['G1', 'G2'], axis=1)
+
+modelNew_nog = sm.OLS(Y_nog, sm.add_constant(XNew_nog))
+resultsNew_nog = modelNew_nog.fit()
+print(resultsNew_nog.summary())
+
+
+# ---- Comparación F entre modelos ----
+yhatNew_nog = resultsNew_nog.predict(sm.add_constant(XNew_nog))
+RSSNew_nog = sum((Y_nog - yhatNew_nog)**2)
+
+df_diff = 2  # quitamos G1 y G2
+FNew_nog = ((RSSNew_nog - RSS_nog) / df_diff) / RMS_nog
+pvalNew_nog = st.f.sf(FNew_nog, df_diff, n_nog - m_nog - 1)
+
+print("New F =", FNew_nog)
+print("p-value cambio modelo =", pvalNew_nog)
+
+print("OLS p-value G1 =", results_nog.pvalues["G1"])
+print("OLS p-value G2 =", results_nog.pvalues["G2"])
+
+```
+
+>Output
+
+
+```text
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                     G3   R-squared:                       0.213
+Model:                            OLS   Adj. R-squared:                  0.186
+Method:                 Least Squares   F-statistic:                     7.714
+Date:                Thu, 05 Feb 2026   Prob (F-statistic):           4.93e-10
+Time:                        04:51:36   Log-Likelihood:                -755.38
+No. Observations:                 266   AIC:                             1531.
+Df Residuals:                     256   BIC:                             1567.
+Df Model:                           9                                         
+Covariance Type:            nonrobust                                         
+====================================================================================
+                       coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------------
+const               10.8579      3.403      3.191      0.002       4.156      17.560
+Edad                -0.3652      0.240     -1.524      0.129      -0.837       0.107
+HorasDeEstudio       1.7430      0.762      2.287      0.023       0.242       3.244
+Reprobadas          -2.4095      0.412     -5.847      0.000      -3.221      -1.598
+Internet            -0.1455      0.743     -0.196      0.845      -1.608       1.317
+Faltas               0.1231      0.054      2.269      0.024       0.016       0.230
+Sexo_bin            -1.9727      0.571     -3.453      0.001      -3.098      -0.848
+Escuela_bin         -1.0295      0.905     -1.137      0.257      -2.812       0.753
+Estudio_bajo         5.1946      1.326      3.917      0.000       2.583       7.806
+Estudio_moderado     3.9651      1.213      3.269      0.001       1.577       6.354
+Estudio_alto         1.6983      2.014      0.843      0.400      -2.268       5.665
+==============================================================================
+Omnibus:                       10.648   Durbin-Watson:                   1.990
+Prob(Omnibus):                  0.005   Jarque-Bera (JB):               10.767
+Skew:                          -0.472   Prob(JB):                      0.00459
+Kurtosis:                       3.286   Cond. No.                     4.50e+16
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+[2] The smallest eigenvalue is 4.06e-29. This might indicate that there are
+strong multicollinearity problems or that the design matrix is singular.
+New F = 469.4260884636481
+p-value cambio modelo = 7.122182214802871e-86
+OLS p-value G1 = 0.013614602718475893
+OLS p-value G2 = 5.233418961859255e-38
+```
+
+
+### Interpretación
+
+Ahora el intercepto tiene un valor mas alto, es lo que tendriamos si todas las demas variables fueran cero, vemos que la edad sigue influyendo de forma negativa pero en una parte mas pequeña, unos cambios curiosos es que en comparacion con el modelo anterior, ahora el estudiar "mas" si influye de manera positiva en la calificacion final.
+
+Sin embargo, podemos ver que nuestra R^2, bajo a 0.186, es decir, ahora nuestro modelo solo puede explciar el 18.6% de los datos en training, un numero demasiado bajo, el cual posiblemente siga bajando en la etapa de test.
+
+
+# Calcular metricas del test
+
+
+
+>Python Code
+
+
+```python
+
+## ================= TEST MODELO 2 (SIN G1 Y G2) =================
+
+XTest_nog = test2.drop(['G3', 'G1', 'G2'], axis=1)
+
+yhatTest_nog = resultsNew_nog.predict(sm.add_constant(XTest_nog))
+
+RSSTest_nog = sum((YTest - yhatTest_nog)**2)
+TSSTest_nog = sum((YTest - np.mean(YTest))**2)
+
+RSETest_nog = np.sqrt(RSSTest_nog / len(YTest))
+R2Test_nog = 1 - RSSTest_nog / TSSTest_nog
+
+print("\nTEST Modelo SIN G1 y G2")
+print("RSE =", RSETest_nog)
+print("R² =", R2Test_nog)
+```
+
+
+
+>Output
+
+
+
+```text
+
+TEST Modelo SIN G1 y G2
+RSE = 4.231572012426069
+R² = 0.09759342767169665
+```
+
+
+Increible, ahora nuestra R^2 es bajisima, aproximadamente despues del training, solo podemos explicar el 9.7% de los datos que hay en el archivo, sugiriendo que como se esperaba naturalmente, las variables de G1 y G2 son criticas para la predicción y para el modelo.
+
+
+### Graficar Prediccion vs Datos reales (modelo SIN G1 y G2)
+
+>Python Code
+
+
+```python
+
+## ================= GRÁFICA MODELO SIN G1 Y G2 =================
+
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(7,6))
+plt.scatter(YTest, yhatTest_nog, alpha=0.7)
+
+min_val = min(YTest.min(), yhatTest_nog.min())
+max_val = max(YTest.max(), yhatTest_nog.max())
+plt.plot([min_val, max_val], [min_val, max_val], color='red')
+
+plt.xlabel("Valores reales (G3)")
+plt.ylabel("Valores predichos (G3)")
+plt.title("Predicciones vs Valores Reales (SIN G1 y G2)")
+plt.show()
+```
+
+
+>Output
+
+
+
+![predvsrealnog](predvsreal_nog.png)
