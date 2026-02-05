@@ -32,4 +32,4 @@ Esto con el objetivo de aprender a lidiar con estos tipos de situaciones y poder
 [Preparación / Limpieza](Preparacion_limpieza.md)
 
 [Relaciones entre variables y seleccion de caracteristicas](Relaciones_entre_variables.md)
-[Train - Test / Conclusiones](.md)
+[Train - Test / Conclusiones](Entrenamiento_Evaluacion.md)
